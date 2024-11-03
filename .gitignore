@@ -11,3 +11,5 @@ __pycache__/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+/.venv
+/proceeding_dispatcher.egg-info
