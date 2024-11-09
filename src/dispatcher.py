@@ -44,8 +44,8 @@ class Dispatcher:
 
     def _check_llm_settigns(self, llm_settings: dict):
         """Check if all LLM settings are present"""
-        mandatory_keys = ["llm_model", "temp", "seed"]
-        if not all([key in llm_settings.keys() for key in mandatory_keys]):
+        accepted_keys = ["llm_model", "temp", "seed"]
+        if not (set(llm_settings.keys()) == set(accepted_keys)):
             raise KeyError(
-                f"llm_settings does not contain the minimum set of keys: {mandatory_keys}"
+                f"llm_settings does not contain the keys needed: {accepted_keys}"
             )
