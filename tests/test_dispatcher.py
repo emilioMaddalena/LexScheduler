@@ -35,5 +35,5 @@ def test_register_person():
     dispatcher = Dispatcher(base_settings)
     dispatcher.register_person(person_to_register, responsibilities)
     assert (
-        person_to_register in dispatcher.people
+        person_to_register in dispatcher.roster
     ), "Person was not registered correctly!"

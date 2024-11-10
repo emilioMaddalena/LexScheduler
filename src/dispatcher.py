@@ -4,6 +4,7 @@ class Dispatcher:
 
     The dispatcher is based on people and responsibilities.
     Each person can have many responsibilities assigned to him/her.
+    All this info is stored in a roster.
 
     The dispatcher reads legal proceedings and assigns them to
     one or more registered people depending on their responsibilities.
@@ -23,7 +24,7 @@ class Dispatcher:
         self._check_llm_settigns(llm_settings)
         self.llm_settings = llm_settings
 
-        self.people = {}
+        self.roster = {}
 
     def register_person(self, name: str, responsibilities: list[str]):
         self._check_person(name)
@@ -32,7 +33,7 @@ class Dispatcher:
 
     def _check_person(self, name: str):
         """Check if person has already been registered"""
-        if name in self.people:
+        if name in self.roster:
             ValueError(f"{name} has already been registered!")
 
     def _check_responsibilities(self, responsibilities: list[str]):
@@ -40,7 +41,7 @@ class Dispatcher:
         pass
 
     def _register_person(self, name: str, responsibilities: list[str]):
-        self.people[name] = responsibilities
+        self.roster[name] = responsibilities
 
     def _check_llm_settigns(self, llm_settings: dict):
         """Check if all LLM settings are present"""
