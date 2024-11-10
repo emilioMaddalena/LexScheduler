@@ -1,0 +1,84 @@
+{
+  "phrases": [
+    {
+      "category": "animal",
+      "text": "As sly as a fox."
+    },
+    {
+      "category": "animal",
+      "text": "A wolf in sheep's clothing."
+    },
+    {
+      "category": "animal",
+      "text": "Let sleeping dogs lie."
+    },
+    {
+      "category": "animal",
+      "text": "Like water off a duck's back."
+    },
+    {
+      "category": "animal",
+      "text": "A bird in the hand is worth two in the bush."
+    },
+    {
+      "category": "animal",
+      "text": "Fish out of water."
+    },
+    {
+      "category": "animal",
+      "text": "Straight from the horse's mouth."
+    },
+    {
+      "category": "animal",
+      "text": "Raining cats and dogs."
+    },
+    {
+      "category": "animal",
+      "text": "Happy as a clam."
+    },
+    {
+      "category": "animal",
+      "text": "A snake in the grass."
+    },
+    {
+      "category": "food",
+      "text": "He's got bigger fish to fry."
+    },
+    {
+      "category": "food",
+      "text": "Piece of cake."
+    },
+    {
+      "category": "food",
+      "text": "In a pickle."
+    },
+    {
+      "category": "food",
+      "text": "Too many cooks spoil the broth."
+    },
+    {
+      "category": "food",
+      "text": "That's the way the cookie crumbles."
+    },
+    {
+      "category": "food",
+      "text": "It's a tough nut to crack."
+    },
+    {
+      "category": "food",
+      "text": "Butter someone up."
+    },
+    {
+      "category": "food",
+      "text": "That's the spice of life."
+    },
+    {
+      "category": "food",
+      "text": "Bring home the bread."
+    },
+    {
+      "category": "food",
+      "text": "Spill the beans."
+    }
+  ]
+}

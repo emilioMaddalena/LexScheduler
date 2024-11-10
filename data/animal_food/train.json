@@ -1,0 +1,85 @@
+{
+    "phrases": [
+      {
+        "category": "animal",
+        "text": "The early bird catches the worm."
+      },
+      {
+        "category": "animal",
+        "text": "As strong as an ox."
+      },
+      {
+        "category": "animal",
+        "text": "A leopard can't change its spots."
+      },
+      {
+        "category": "animal",
+        "text": "Curiosity killed the cat."
+      },
+      {
+        "category": "animal",
+        "text": "He's a lone wolf."
+      },
+      {
+        "category": "animal",
+        "text": "Busy as a bee."
+      },
+      {
+        "category": "animal",
+        "text": "Like a fish out of water."
+      },
+      {
+        "category": "animal",
+        "text": "The elephant in the room."
+      },
+      {
+        "category": "animal",
+        "text": "Hold your horses."
+      },
+      {
+        "category": "animal",
+        "text": "You can't teach an old dog new tricks."
+      },
+      {
+        "category": "food",
+        "text": "The apple doesn’t fall far from the tree."
+      },
+      {
+        "category": "food",
+        "text": "She's a tough cookie."
+      },
+      {
+        "category": "food",
+        "text": "Bringing home the bacon."
+      },
+      {
+        "category": "food",
+        "text": "Don't cry over spilled milk."
+      },
+      {
+        "category": "food",
+        "text": "Take it with a grain of salt."
+      },
+      {
+        "category": "food",
+        "text": "He’s the big cheese around here."
+      },
+      {
+        "category": "food",
+        "text": "The icing on the cake."
+      },
+      {
+        "category": "food",
+        "text": "Cool as a cucumber."
+      },
+      {
+        "category": "food",
+        "text": "She’s full of beans."
+      },
+      {
+        "category": "food",
+        "text": "It’s not my cup of tea."
+      }
+    ]
+  }
+  
