@@ -1,5 +1,6 @@
 # Local dev files
 dev_*
+build/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -13,3 +14,4 @@ __pycache__/
 .ipynb_checkpoints
 /.venv
 /proceeding_dispatcher.egg-info
+*/.DS_Store
