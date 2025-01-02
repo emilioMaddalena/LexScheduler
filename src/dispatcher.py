@@ -1,6 +1,5 @@
 class Dispatcher:
-    """
-    A legal proceeding dispatcher.
+    """A legal proceeding dispatcher.
 
     The dispatcher is based on people and responsibilities.
     Each person can have many responsibilities assigned to him/her.
@@ -13,40 +12,56 @@ class Dispatcher:
     (LLM) that links proceedings to people.
     """
 
-    def __init__(self, llm_settings: dict):
-        """
-        Ingest LLM settings based on which the dispatcher will operate.
-
-        llm_settings = {"llm_model": "llama2-uncensored",
-                        "temp": 0.1,
-                        "seed": 1}
-        """
-        self._check_llm_settigns(llm_settings)
-        self.llm_settings = llm_settings
-
+    def __init__(self):
+        """Initialize the dispatcher."""
+        self._llm_configured = False
         self.roster = {}
 
-    def register_person(self, name: str, responsibilities: list[str]):
+    def initialize_llm(self, llm_settings):
+        """Set up the LLM based on the settings."""
+        self._check_llm_settigns(llm_settings)
+        #! TODO Initialize the LLM
+        self._llm_configured = True
+        pass
+
+    def dispatch_proceeding(self, proceeding: str):
+        """Dispatch a proceeding to the right person based on the LLM."""
+        if not self._llm_configured:
+            raise ValueError("LLM has not been configured yet!")
+        pass
+
+    def register_person(self, name: str, responsibilities: list[str]): 
+        """_summary_."""
         self._check_person(name)
         self._check_responsibilities(responsibilities)
         self._register_person(name, responsibilities)
 
     def _check_person(self, name: str):
-        """Check if person has already been registered"""
+        """Check if person has already been registered."""
         if name in self.roster:
             ValueError(f"{name} has already been registered!")
 
     def _check_responsibilities(self, responsibilities: list[str]):
-        """Placeholder for future check"""
+        """Check if the responsibilities are valid."""
         pass
 
     def _register_person(self, name: str, responsibilities: list[str]):
         self.roster[name] = responsibilities
 
     def _check_llm_settigns(self, llm_settings: dict):
-        """Check if all LLM settings are present"""
+        """Check if all LLM settings are present."""
         accepted_keys = ["llm_model", "temp", "seed"]
         if not (set(llm_settings.keys()) == set(accepted_keys)):
             raise KeyError(
                 f"llm_settings does not contain the keys needed: {accepted_keys}"
             )
+        
+    @property
+    def num_of_people(self):
+        """Return the number of people in the roster."""
+        return len(self.roster)
+    
+    @property
+    def has_empty_roster(self):
+        """Check if the roster is empty."""
+        return False if self.num_of_people > 0 else True
