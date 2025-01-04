@@ -23,7 +23,7 @@ print(response.message.content)
 OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
 
-class LLM:
+class Llm:
     """TBW."""
 
     def __init__(self, model_name: str):  # noqa: D107
