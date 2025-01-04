@@ -1,4 +1,5 @@
 import ollama
+import requests
 
 """
 from ollama import chat
@@ -19,9 +20,11 @@ response = chat(model=model_name, messages=messages)
 print(response.message.content)
 """
 
+OLLAMA_ADDRESS = "localhost"
+OLLAMA_PORT = "11434"
 
-class OllamaInterface:
-    """_summary_."""
+class LLM:
+    """TBW."""
 
     def __init__(self, model_name: str):  # noqa: D107
         self.model_name = model_name
@@ -29,10 +32,17 @@ class OllamaInterface:
         # Optionally pre-load model or store a handle
         self.client = ollama.Client(model=self.model_name)
 
-    def keep_alive(self):  # noqa: D102
-        # Simple method to ensure model remains loaded
-        response = self.client.generate("ping")
-        return response
+    def _is_ollama_running(self):
+        """Check if ollama is running."""
+        successful_response = 200
+        try:
+            response = requests.get(f"http://{OLLAMA_ADDRESS}:{OLLAMA_PORT}/")
+            return response.status_code == successful_response
+        except requests.exceptions.ConnectionError:
+            return False
+
+    def keep_alive(self):
+        pass
 
     def submit_query(self, prompt: str) -> str:  # noqa: D102
         # Combine stored context with new prompt
