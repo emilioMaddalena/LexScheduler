@@ -24,9 +24,10 @@ OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
 
 class Llm:
-    """TBW."""
-
-    def __init__(self, model_name: str):  # noqa: D107
+    """The LLM interface.
+    
+    This class assumes ollama is running in the background, 
+    which is a local LLM server. The class then provides an 
         self.model_name = model_name
         self.context = ""
         # Optionally pre-load model or store a handle
