@@ -24,6 +24,12 @@ print(response.message.content)
 OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
 
+class OllamaServerError(Exception):  # noqa: D101
+    pass
+
+class ModelNotAvailableError(Exception):  # noqa: D101
+    pass
+
 class Llm:
     """The LLM interface.
     
@@ -33,13 +39,15 @@ class Llm:
     """
 
     def __init__(self, model_name: str):  
-        """Check if ollama is running and if the desired model is available."""  
+        """Store the model name if everything is fine."""  
+        if not self._is_ollama_running():
+            raise OllamaServerError("Ollama server is not running.")
+        if not self._is_model_available(model_name):
+            raise ModelNotAvailableError(f"Model '{model_name}' is not available.")
         self.model_name = model_name
-        # self.context = ""
-        # Optionally pre-load model or store a handle
-        # self.client = ollama.Client(model=self.model_name)
 
-    def _is_ollama_running(self):
+    @staticmethod
+    def _is_ollama_running():
         """Check if the ollama server is running."""
         successful_response = 200
         try:
@@ -48,11 +56,12 @@ class Llm:
         except requests.exceptions.ConnectionError:
             return False
 
-    def _is_model_available(self):
+    @staticmethod
+    def _is_model_available(model_name):
         """Check if the model is available in the server."""
         models = ollama.list().models
         model_names = [model.model for model in models]
-        return self.model_name in model_names
+        return model_name in model_names
     
     def keep_alive(self):
         pass
