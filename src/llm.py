@@ -22,6 +22,7 @@ print(response.message.content)
 
 OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
+DEFAULT_ANSWER = "I could not generate a reply."
 
 
 class OllamaServerError(Exception):  # noqa: D101
@@ -74,9 +75,10 @@ class Llm:
             },
         ]
         response = ollama.chat(model=self.model_name, messages=messages)
-        output_text = response["message"]["content"]
-        return output_text
-
+        if response.message.content:
+            return response.message.content
+        else:
+            return DEFAULT_ANSWER
 
     # def submit_query(self, prompt: str) -> str:  # noqa: D102
     #     # Combine stored context with new prompt
