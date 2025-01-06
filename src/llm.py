@@ -1,6 +1,5 @@
 import ollama
 import requests
-from ollama import chat
 
 """
 from ollama import chat
@@ -24,22 +23,25 @@ print(response.message.content)
 OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
 
+
 class OllamaServerError(Exception):  # noqa: D101
     pass
+
 
 class ModelNotAvailableError(Exception):  # noqa: D101
     pass
 
+
 class Llm:
     """The LLM interface.
-    
-    This class assumes ollama is running in the background, 
-    which is a local LLM server. The class then provides an 
+
+    This class assumes ollama is running in the background,
+    which is a local LLM server. The class then provides an
     interface for interacting with the service.
     """
 
-    def __init__(self, model_name: str):  
-        """Store the model name if everything is fine."""  
+    def __init__(self, model_name: str):
+        """Store the model name if everything is fine."""
         if not self._is_ollama_running():
             raise OllamaServerError("Ollama server is not running.")
         if not self._is_model_available(model_name):
@@ -62,9 +64,19 @@ class Llm:
         models = ollama.list().models
         model_names = [model.model for model in models]
         return model_name in model_names
-    
-    def keep_alive(self):
-        pass
+
+    def raw_chat(self, input_text: str) -> str:
+        """Chat with the LLM with no context."""
+        messages = [
+            {
+                "role": "user",
+                "content": input_text,
+            },
+        ]
+        response = ollama.chat(model=self.model_name, messages=messages)
+        output_text = response["message"]["content"]
+        return output_text
+
 
     # def submit_query(self, prompt: str) -> str:  # noqa: D102
     #     # Combine stored context with new prompt
