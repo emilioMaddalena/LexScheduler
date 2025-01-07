@@ -80,12 +80,48 @@ class Llm:
         else:
             return DEFAULT_ANSWER
 
-    # def submit_query(self, prompt: str) -> str:  # noqa: D102
-    #     # Combine stored context with new prompt
-    #     combined_prompt = f"{self.context}\n{prompt}"
-    #     response = self.client.generate(combined_prompt)
-    #     return response.get("text", "")
+    def chat_with_history(self, history: list[str], input_text: str) -> str:
+        """Chat with the LLM with context.
 
-    # def append_context(self, additional_context: str):  # noqa: D102
-    #     # Adds new context to be used in subsequent queries
-    #     self.context += "\n" + additional_context
+        Args:
+            history (list[str]): assumed to be a list of alternating messages:
+                                 one from the user, then the assistant, then user, etc.
+            input_text (str): the new query to be answered by the model.
+        """
+        self._check_valid_history(history)
+
+        # apply a user/assistant and content pattern to the history
+        formatted_history = []
+        roles = ["user", "assistant"]
+        for i, content in enumerate(history):
+            role = roles[i % 2]
+            formatted_history.append({"role": role, "content": content})
+
+        # compose final message and submit it to the server
+        final_message = formatted_history + [
+            {
+                "role": "user",
+                "content": input_text,
+            },
+        ]
+        response = ollama.chat(model=self.model_name, messages=final_message)
+        if response.message.content:
+            return response.message.content
+        else:
+            return DEFAULT_ANSWER
+
+    def _check_valid_history(self, history: list[str]):
+        """Check if the history is valid.
+
+        Args:
+            history (list[str]): assumed to be a list of alternating messages:
+                                 one from the user, then the assistant, then user, etc.
+
+        Raises:
+            ValueError: If the history is not a list of strings or if it does not contain 
+                        an even number of elements.
+        """
+        if not isinstance(history, list) or not all(isinstance(item, str) for item in history):
+            raise ValueError("History must be a list of strings.")
+        if len(history) % 2 != 0:
+            raise ValueError("History must contain an even number of elements.")
