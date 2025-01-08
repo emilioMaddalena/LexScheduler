@@ -1,25 +1,6 @@
 import ollama
 import requests
 
-"""
-from ollama import chat
-
-# Define the model and the message
-model_name = 'llama3.2'
-messages = [
-    {
-        'role': 'user',
-        'content': 'Why is the sky blue?',
-    },
-]
-
-# Send the message using the chat function
-response = chat(model=model_name, messages=messages)
-
-# Access and print the response content
-print(response.message.content)
-"""
-
 OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
 DEFAULT_ANSWER = "I could not generate a reply."
@@ -118,7 +99,7 @@ class Llm:
                                  one from the user, then the assistant, then user, etc.
 
         Raises:
-            ValueError: If the history is not a list of strings or if it does not contain 
+            ValueError: If the history is not a list of strings or if it does not contain
                         an even number of elements.
         """
         if not isinstance(history, list) or not all(isinstance(item, str) for item in history):
