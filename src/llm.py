@@ -1,10 +1,14 @@
+import json
+
 import ollama
 import requests
 
 OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
 DEFAULT_ANSWER = "I could not generate a reply."
-
+TEMPERATURE = 0
+SEED = 0
+SYSTEM_MESSAGE = "You are a machine that outputs single words according to the user's request."
 
 class OllamaServerError(Exception):  # noqa: D101
     pass
@@ -59,6 +63,39 @@ class Llm:
         if response.message.content:
             return response.message.content
         else:
+            return DEFAULT_ANSWER
+
+    def _extract_message(self, http_response: requests.Response) -> str:
+        """Extract the message content from the HTTP response."""
+        response_text = http_response.text.strip()
+        response_jsons = response_text.split('\n')
+        message_bits = []
+        for response_json in response_jsons:
+            parsed_json = json.loads(response_json)
+            if "message" in parsed_json and "content" in parsed_json["message"]:
+                message_bits.append(parsed_json["message"]["content"])
+        message = "".join(message_bits)
+        return message
+
+
+    def raw_chat_http(self, input_text: str) -> str:
+        """Chat with the LLM using HTTP POST request with no context."""
+        url = f"http://{OLLAMA_ADDRESS}:{OLLAMA_PORT}/api/chat"
+        payload = {
+            "model": self.model_name,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": input_text,
+                    "stream": False,
+                },
+            ],
+        }
+        try:
+            response = requests.post(url, json=payload)
+            response.raise_for_status()
+            return self._extract_message(response)
+        except requests.exceptions.RequestException:
             return DEFAULT_ANSWER
 
     def chat_with_history(self, history: list[str], input_text: str) -> str:
