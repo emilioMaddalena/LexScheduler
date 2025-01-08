@@ -88,7 +88,7 @@ class Llm:
                                  one from the user, then the assistant, then user, etc.
             input_text (str): the new query to be answered by the model.
         """
-        self._check_valid_history(history)
+        self._validate_history(history)
 
         # apply a user/assistant and content pattern to the history
         formatted_history = []
@@ -110,7 +110,7 @@ class Llm:
         else:
             return DEFAULT_ANSWER
 
-    def _check_valid_history(self, history: list[str]):
+    def _validate_history(self, history: list[str]):
         """Check if the history is valid.
 
         Args:
