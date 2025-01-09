@@ -51,7 +51,7 @@ class Llm:
         model_names = [model.model for model in models]
         return model_name in model_names
 
-    def raw_chat(self, input_text: str) -> str:
+    def chat(self, input_text: str) -> str:
         """Chat with the LLM with no context."""
         messages = [
             {
