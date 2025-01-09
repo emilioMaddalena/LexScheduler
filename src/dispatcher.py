@@ -1,3 +1,6 @@
+from typing import Dict, List, Optional
+
+
 class Dispatcher:
     """A legal proceeding dispatcher.
 
@@ -12,10 +15,14 @@ class Dispatcher:
     (LLM) that links proceedings to people.
     """
 
-    def __init__(self):
+    def __init__(self, roster: Optional[Dict[str, List[str]]] = None):
         """Initialize the dispatcher."""
         self._llm_configured = False
         self.roster = {}
+        # If already given, register all people
+        if roster:
+            for person, responsibilities in roster.items():
+                self.register_person(person, responsibilities)
 
     def initialize_llm(self, llm_settings):
         """Set up the LLM based on the settings."""
