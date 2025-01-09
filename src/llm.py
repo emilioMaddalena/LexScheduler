@@ -78,7 +78,7 @@ class Llm:
         return message
 
 
-    def raw_chat_http(self, input_text: str) -> str:
+    def raw_chat_http(self, input_text: str, **kwargs) -> str:
         """Chat with the LLM using HTTP POST request with no context."""
         url = f"http://{OLLAMA_ADDRESS}:{OLLAMA_PORT}/api/chat"
         payload = {
@@ -87,10 +87,11 @@ class Llm:
                 {
                     "role": "user",
                     "content": input_text,
-                    "stream": False,
                 },
             ],
+            "stream": False,
         }
+        payload.update(kwargs)
         try:
             response = requests.post(url, json=payload)
             response.raise_for_status()
