@@ -1,4 +1,5 @@
 import json
+from typing import Dict, AnyStr, Optional
 
 import ollama
 import requests
@@ -26,13 +27,14 @@ class Llm:
     interface for interacting with the service.
     """
 
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, system_message: Optional[AnyStr] = None):
         """Store the model name if everything is fine."""
         if not self._is_ollama_running():
             raise OllamaServerError("Ollama server is not running.")
         if not self._is_model_available(model_name):
             raise ModelNotAvailableError(f"Model '{model_name}' is not available.")
         self.model_name = model_name
+        self.system_message = system_message
 
     @staticmethod
     def _is_ollama_running():
@@ -57,13 +59,26 @@ class Llm:
             {
                 "role": "user",
                 "content": input_text,
-            },
+            }
         ]
-        response = ollama.chat(model=self.model_name, messages=messages)
+        message = self._prepend_system_message(messages)
+        response = ollama.chat(model=self.model_name, messages=message)
         if response.message.content:
             return response.message.content
         else:
             return DEFAULT_ANSWER
+
+    def _prepend_system_message(self, message):
+        """Prepend a system message to the existing message if needed."""
+        # Nothing to prepend
+        if not self.system_message:
+            return message
+        # Smth to prepend
+        formatted_system_message = {
+            "role": "system",
+            "content": self.system_message,
+        }
+        return [formatted_system_message, *message]
 
     def _extract_message(self, http_response: requests.Response) -> str:
         """Extract the message content from the HTTP response."""
@@ -78,17 +93,19 @@ class Llm:
         return message
 
 
-    def raw_chat_http(self, input_text: str, **kwargs) -> str:
+    def chat_http(self, input_text: str, **kwargs) -> str:
         """Chat with the LLM using HTTP POST request with no context."""
+        message = [
+            {
+                "role": "user",
+                "content": input_text,
+            }
+        ]
+        message = self._prepend_system_message(message)
         url = f"http://{OLLAMA_ADDRESS}:{OLLAMA_PORT}/api/chat"
         payload = {
             "model": self.model_name,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": input_text,
-                },
-            ],
+            "messages": message,
             "stream": False,
         }
         payload.update(kwargs)
