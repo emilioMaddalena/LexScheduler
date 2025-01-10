@@ -1,5 +1,5 @@
 import json
-from typing import Dict, AnyStr, Optional
+from typing import AnyStr, Optional
 
 import ollama
 import requests
