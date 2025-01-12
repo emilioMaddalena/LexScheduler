@@ -3,37 +3,49 @@ import pytest
 from src.dispatcher import Dispatcher
 
 
-def test_llm_settings_check():
-    incomplete_settings = {"llm_model": "llama2-uncensored"}
-    with pytest.raises(KeyError):
-        Dispatcher(incomplete_settings)
-
-    wrong_settings = {"llllm_model": "llama2-uncensored"}
-    with pytest.raises(KeyError):
-        Dispatcher(wrong_settings)
-
-    too_many_settings = {
-        "llm_model": "llama2-uncensored",
-        "temp": 0.1,
-        "seed": 1,
-        "day": "Monday",
+@pytest.fixture(scope="module")
+def base_dispatcher():  # noqa: D103
+    base_roster = {
+        "marco polo": ["cooking carbonara", "discovering america"],
+        "jane doe": ["watching netflix", "saying hi"],
     }
-    with pytest.raises(KeyError):
-        Dispatcher(too_many_settings)
+    return Dispatcher(roster=base_roster)
 
 
-base_settings = {
-    "llm_model": "llama2-uncensored",
-    "temp": 0.1,
-    "seed": 1,
-}
+@pytest.mark.parametrize("new_person", ["mikey mouse", "tiririca"])
+def test_validate_person_valid(base_dispatcher, new_person):
+    """Test _validate_person with valid new persons."""
+    try:
+        base_dispatcher._validate_person(new_person)
+    except ValueError:
+        pytest.fail(f"_validate_person raised ValueError unexpectedly for {new_person}!")
 
 
-def test_register_person():
-    person_to_register = "Marco Polo"
-    responsibilities = ["Cooking carbonara", "Discovering America"]
-    dispatcher = Dispatcher(base_settings)
-    dispatcher.register_person(person_to_register, responsibilities)
-    assert (
-        person_to_register in dispatcher.roster
-    ), "Person was not registered correctly!"
+@pytest.mark.parametrize("existing_person", ["marco polo", "jane doe"])
+def test_validate_person_invalid(base_dispatcher, existing_person):
+    """Test _validate_person with already registered people."""
+    with pytest.raises(ValueError, match=f"{existing_person} has already been registered!"):
+        base_dispatcher._validate_person(existing_person)
+
+
+@pytest.mark.parametrize(
+    "new_responsibilities", [["teaching", "coding"], ["gardening", "painting"]]
+)
+def test_validate_responsibilities_valid(base_dispatcher, new_responsibilities):
+    """Test _valdiate_responsibilities with valid new responsibilities."""
+    try:
+        base_dispatcher._valdiate_responsibilities(new_responsibilities)
+    except ValueError:
+        pytest.fail(
+            f"_valdiate_responsibilities raised ValueError unexpectedly for {new_responsibilities}!"
+        )
+
+
+@pytest.mark.parametrize("existing_responsibility", [["cooking carbonara"], ["watching netflix"]])
+def test_validate_responsibilities_invalid(base_dispatcher, existing_responsibility):
+    """Test _valdiate_responsibilities with already registered responsibilities."""
+    with pytest.raises(
+        ValueError,
+        match=f"{existing_responsibility[0]} was already registered as a responsibility.",
+    ):
+        base_dispatcher._valdiate_responsibilities(existing_responsibility)
