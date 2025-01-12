@@ -75,11 +75,16 @@ class Dispatcher:
             )
         
     @property
-    def num_of_people(self):
+    def num_of_people(self) -> int:
         """Return the number of people in the roster."""
         return len(self.roster)
     
     @property
-    def has_empty_roster(self):
+    def has_empty_roster(self) -> bool:
         """Check if the roster is empty."""
         return False if self.num_of_people > 0 else True
+    
+    @property
+    def all_responsibilities(self) -> List:
+        """Return all responsibilities all people have."""
+        return [res for sublist in self.roster.values() for res in sublist]

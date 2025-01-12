@@ -49,3 +49,12 @@ def test_validate_responsibilities_invalid(base_dispatcher, existing_responsibil
         match=f"{existing_responsibility[0]} was already registered as a responsibility.",
     ):
         base_dispatcher._valdiate_responsibilities(existing_responsibility)
+
+def test_all_responsibilities():
+    """Test if the property returns the correct list of responsibilities."""
+    dispatcher = Dispatcher(
+        roster = {
+            "person a": ["doing the dishes"],
+            "person b": ["saying hi", "waving goodbye"],
+    })
+    assert dispatcher.all_responsibilities == ["doing the dishes", "saying hi", "waving goodbye"]
