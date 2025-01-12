@@ -7,9 +7,14 @@ import requests
 OLLAMA_ADDRESS = "localhost"
 OLLAMA_PORT = "11434"
 DEFAULT_ANSWER = "I could not generate a reply."
-TEMPERATURE = 0
-SEED = 0
-SYSTEM_MESSAGE = "You are a machine that outputs single words according to the user's request."
+
+# These are only used if the chat http method is used
+STANDARD_HTTP_LLM_SETTINGS = {
+    "temperature": 0.1,
+    "seed": 0,
+    "stream": False,
+}
+
 
 class OllamaServerError(Exception):  # noqa: D101
     pass
@@ -83,7 +88,7 @@ class Llm:
     def _extract_message(self, http_response: requests.Response) -> str:
         """Extract the message content from the HTTP response."""
         response_text = http_response.text.strip()
-        response_jsons = response_text.split('\n')
+        response_jsons = response_text.split("\n")
         message_bits = []
         for response_json in response_jsons:
             parsed_json = json.loads(response_json)
@@ -91,7 +96,6 @@ class Llm:
                 message_bits.append(parsed_json["message"]["content"])
         message = "".join(message_bits)
         return message
-
 
     def chat_http(self, input_text: str, **kwargs) -> str:
         """Chat with the LLM using HTTP POST request with no context."""
@@ -106,8 +110,10 @@ class Llm:
         payload = {
             "model": self.model_name,
             "messages": message,
-            "stream": False,
         }
+        # append standard settings and add any extra setting passed as a parameter
+        # NB the kwargs have the power to overwrite the standard settings 
+        payload = payload | STANDARD_HTTP_LLM_SETTINGS
         payload.update(kwargs)
         try:
             response = requests.post(url, json=payload)
@@ -132,7 +138,6 @@ class Llm:
         for i, content in enumerate(history):
             role = roles[i % 2]
             formatted_history.append({"role": role, "content": content})
-
         # compose final message and submit it to the server
         final_message = formatted_history + [
             {
@@ -140,6 +145,7 @@ class Llm:
                 "content": input_text,
             },
         ]
+        final_message = self._prepend_system_message(final_message)
         response = ollama.chat(model=self.model_name, messages=final_message)
         if response.message.content:
             return response.message.content
