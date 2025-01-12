@@ -8,6 +8,14 @@ class Dispatcher:
     Each person can have many responsibilities assigned to him/her.
     All this info is stored in a roster.
 
+    An example of a roster might be:
+    self.roster = {
+        "jane doe": ["cooking carbonara", "being cool"],
+        "mickey mouse": ["writing code"],
+        "your cousin": ["skating", "making money"],
+    }
+    No two people can share the same responsibility.
+
     The dispatcher reads legal proceedings and assigns them to
     one or more registered people depending on their responsibilities.
 
@@ -38,19 +46,22 @@ class Dispatcher:
         pass
 
     def register_person(self, name: str, responsibilities: list[str]): 
-        """_summary_."""
-        self._check_person(name)
-        self._check_responsibilities(responsibilities)
+        """Register a new person and a new set of responsibilities."""
+        self._validate_person(name)
+        self._valdiate_responsibilities(responsibilities)
         self._register_person(name, responsibilities)
 
-    def _check_person(self, name: str):
+    def _validate_person(self, name: str):
         """Check if person has already been registered."""
         if name in self.roster:
-            ValueError(f"{name} has already been registered!")
+            raise ValueError(f"{name} has already been registered!")
 
-    def _check_responsibilities(self, responsibilities: list[str]):
-        """Check if the responsibilities are valid."""
-        pass
+    def _valdiate_responsibilities(self, responsibilities: list[str]):
+        """Check if the responsibilities have already been registered."""
+        already_registered = [res for sublist in self.roster.values() for res in sublist]
+        for res in responsibilities:
+            if res in already_registered:
+                raise ValueError(f"{res} was already registered as a responsibility.")
 
     def _register_person(self, name: str, responsibilities: list[str]):
         self.roster[name] = responsibilities
