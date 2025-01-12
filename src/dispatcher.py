@@ -1,5 +1,7 @@
 from typing import Dict, List, Optional
 
+from .llm import Llm
+
 
 class Dispatcher:
     """A legal proceeding dispatcher.
@@ -25,27 +27,35 @@ class Dispatcher:
 
     def __init__(self, roster: Optional[Dict[str, List[str]]] = None):
         """Initialize the dispatcher."""
-        self._llm_configured = False
+        self.llm = None
         self.roster = {}
         # If already given, register all people
         if roster:
             for person, responsibilities in roster.items():
                 self.register_person(person, responsibilities)
 
-    def initialize_llm(self, llm_settings):
-        """Set up the LLM based on the settings."""
-        self._check_llm_settigns(llm_settings)
-        #! TODO Initialize the LLM
-        self._llm_configured = True
-        pass
+    def initialize_llm(self, model_name: str, system_message: Optional[str] = None):
+        """Instantiate an LLM.
+
+        Args:
+            model_name (str): The name of the LLM model to use.
+            system_message (Optional[str]): An optional system message to prepend to each request.
+
+        Raises:
+            ValueError: If the LLM initialization fails.
+        """
+        try:
+            self.llm = Llm(model_name=model_name, system_message=system_message)
+        except Exception as e:
+            raise ValueError(f"Failed to initialize LLM: {e}")
 
     def dispatch_proceeding(self, proceeding: str):
         """Dispatch a proceeding to the right person based on the LLM."""
-        if not self._llm_configured:
-            raise ValueError("LLM has not been configured yet!")
+        if not self.llm:
+            raise ValueError("LLM has not been initialized yet!")
         pass
 
-    def register_person(self, name: str, responsibilities: list[str]): 
+    def register_person(self, name: str, responsibilities: list[str]):
         """Register a new person and a new set of responsibilities."""
         self._validate_person(name)
         self._valdiate_responsibilities(responsibilities)
@@ -70,20 +80,18 @@ class Dispatcher:
         """Check if all LLM settings are present."""
         accepted_keys = ["llm_model", "temp", "seed"]
         if not (set(llm_settings.keys()) == set(accepted_keys)):
-            raise KeyError(
-                f"llm_settings does not contain the keys needed: {accepted_keys}"
-            )
-        
+            raise KeyError(f"llm_settings does not contain the keys needed: {accepted_keys}")
+
     @property
     def num_of_people(self) -> int:
         """Return the number of people in the roster."""
         return len(self.roster)
-    
+
     @property
     def has_empty_roster(self) -> bool:
         """Check if the roster is empty."""
         return False if self.num_of_people > 0 else True
-    
+
     @property
     def all_responsibilities(self) -> List:
         """Return all responsibilities all people have."""
