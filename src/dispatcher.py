@@ -34,16 +34,20 @@ class Dispatcher:
             for person, responsibilities in roster.items():
                 self.register_person(person, responsibilities)
 
-    def initialize_llm(self, model_name: str, system_message: Optional[str] = None):
+    def initialize_llm(self, model_name: str):
         """Instantiate an LLM.
 
         Args:
             model_name (str): The name of the LLM model to use.
-            system_message (Optional[str]): An optional system message to prepend to each request.
 
         Raises:
             ValueError: If the LLM initialization fails.
         """
+        system_message = (
+            "You must answer as a machine."
+            "Classify the task below in exactly one of the following categories: "
+            f"{', '.join(self.all_responsibilities)}"
+        )
         try:
             self.llm = Llm(model_name=model_name, system_message=system_message)
         except Exception as e:
