@@ -59,6 +59,13 @@ class Dispatcher:
             raise ValueError("LLM has not been initialized yet!")
         pass
 
+    def _classify_proceeding(self, proceeding: str) -> str:
+        """Classify a proceeding as one of the responsibilities."""
+        if not self.llm:
+            raise ValueError("LLM has not been initialized yet!")
+        formatted_prompt = f"Task: {proceeding}"
+        return self.llm.chat_http(formatted_prompt)
+
     def register_person(self, name: str, responsibilities: list[str]):
         """Register a new person and a new set of responsibilities."""
         self._validate_person(name)
