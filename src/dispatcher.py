@@ -54,17 +54,28 @@ class Dispatcher:
             raise ValueError(f"Failed to initialize LLM: {e}")
 
     def dispatch_proceeding(self, proceeding: str):
-        """Dispatch a proceeding to the right person based on the LLM."""
+        """Return the person responsible for a proceeding task."""
         if not self.llm:
             raise ValueError("LLM has not been initialized yet!")
-        pass
+        responsibility = self._classify_proceeding(proceeding)
+        person = next((p for p, r in self.roster.items() if responsibility in r), None)
+        return person
 
     def _classify_proceeding(self, proceeding: str) -> str:
         """Classify a proceeding as one of the responsibilities."""
         if not self.llm:
             raise ValueError("LLM has not been initialized yet!")
         formatted_prompt = f"Task: {proceeding}"
-        return self.llm.chat_http(formatted_prompt)
+        reply = self.llm.chat_http(formatted_prompt)
+        responsibility = self._cleanse_reply(reply)
+        return responsibility
+    
+    def _cleanse_reply(self, reply: str) -> str:
+        """Identify if exactly one and no other of the responsibilities are present."""
+        found_responsibilities = [res for res in self.all_responsibilities if res in reply]
+        if len(found_responsibilities) != 1:
+            raise ValueError(f"Could not identify exactly one responsibility in the reply: {reply}")
+        return found_responsibilities[0]
 
     def register_person(self, name: str, responsibilities: list[str]):
         """Register a new person and a new set of responsibilities."""
