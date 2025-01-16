@@ -58,3 +58,27 @@ def test_all_responsibilities():
             "person b": ["saying hi", "waving goodbye"],
     })
     assert dispatcher.all_responsibilities == ["doing the dishes", "saying hi", "waving goodbye"]
+
+@pytest.mark.parametrize(
+    "reply, expected_responsibility",
+    [
+        ("The task is related to cooking carbonara.", "cooking carbonara"),
+        ("This is about discovering america.", "discovering america"),
+    ]
+)
+def test_cleanse_reply_valid(base_dispatcher, reply, expected_responsibility):
+    """Test _cleanse_reply with valid replies."""
+    responsibility = base_dispatcher._cleanse_reply(reply)
+    assert responsibility == expected_responsibility
+
+@pytest.mark.parametrize(
+    "reply",
+    [
+        ("This task is related to cooking and discovering."),
+        ("No matching responsibility found."),
+    ]
+)
+def test_cleanse_reply_invalid(base_dispatcher, reply):
+    """Test _cleanse_reply with invalid replies."""
+    with pytest.raises(ValueError, match="Could not identify exactly one responsibility in the reply:"):
+        base_dispatcher._cleanse_reply(reply)
