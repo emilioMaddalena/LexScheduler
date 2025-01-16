@@ -57,25 +57,26 @@ class Dispatcher:
         """Return the person responsible for a proceeding task."""
         if not self.llm:
             raise ValueError("LLM has not been initialized yet!")
-        responsibility = self._classify_proceeding(proceeding)
-        person = next((p for p, r in self.roster.items() if responsibility in r), None)
+        llm_reply = self.llm.chat_http(f"Task: {proceeding}")
+        responsibility = self._identify_responsibility(llm_reply)
+        person = self._identify_person(responsibility)
         return person
 
-    def _classify_proceeding(self, proceeding: str) -> str:
-        """Classify a proceeding as one of the responsibilities."""
-        if not self.llm:
-            raise ValueError("LLM has not been initialized yet!")
-        formatted_prompt = f"Task: {proceeding}"
-        reply = self.llm.chat_http(formatted_prompt)
-        responsibility = self._cleanse_reply(reply)
-        return responsibility
-
-    def _cleanse_reply(self, reply: str) -> str:
+    def _identify_responsibility(self, llm_reply: str) -> str:
         """Identify if exactly one and no other of the responsibilities are present."""
-        found_responsibilities = [res for res in self.all_responsibilities if res in reply]
+        found_responsibilities = [res for res in self.all_responsibilities if res in llm_reply]
         if len(found_responsibilities) != 1:
-            raise ValueError(f"Could not identify exactly one responsibility in the reply: {reply}")
+            raise ValueError(
+                f"Could not identify exactly one responsibility in the reply: {llm_reply}"
+            )
         return found_responsibilities[0]
+    
+    def _identify_person(self, responsibility: str) -> str:
+        """Find which one person from the roster has the responsibility."""
+        person = next((p for p, r in self.roster.items() if responsibility in r), None)
+        if not person:
+            raise ValueError(f"No person found for responsibility: {responsibility}")
+        return person
 
     def register_person(self, name: str, responsibilities: list[str]):
         """Register a new person and a new set of responsibilities."""
