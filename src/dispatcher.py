@@ -69,7 +69,7 @@ class Dispatcher:
         reply = self.llm.chat_http(formatted_prompt)
         responsibility = self._cleanse_reply(reply)
         return responsibility
-    
+
     def _cleanse_reply(self, reply: str) -> str:
         """Identify if exactly one and no other of the responsibilities are present."""
         found_responsibilities = [res for res in self.all_responsibilities if res in reply]

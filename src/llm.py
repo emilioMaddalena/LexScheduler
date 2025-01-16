@@ -112,7 +112,7 @@ class Llm:
             "messages": message,
         }
         # append standard settings and add any extra setting passed as a parameter
-        # NB the kwargs have the power to overwrite the standard settings 
+        # NB the kwargs have the power to overwrite the standard settings
         payload = payload | STANDARD_HTTP_LLM_SETTINGS
         payload.update(kwargs)
         try:
