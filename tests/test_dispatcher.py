@@ -56,23 +56,26 @@ def test_validate_responsibilities_invalid(base_dispatcher, existing_responsibil
     [
         ("The task is related to cooking carbonara.", "cooking carbonara"),
         ("This is about discovering america.", "discovering america"),
-    ]
+    ],
 )
 def test_identify_responsibility_valid(base_dispatcher, llm_reply, expected_responsibility):
     """Test _identify_responsibility with valid replies."""
     responsibility = base_dispatcher._identify_responsibility(llm_reply)
     assert responsibility == expected_responsibility
 
+
 @pytest.mark.parametrize(
     "llm_reply",
     [
         ("This task is related to cooking and discovering."),
         ("No matching responsibility found."),
-    ]
+    ],
 )
 def test_identify_responsibility_invalid(base_dispatcher, llm_reply):
     """Test _identify_responsibility with invalid replies."""
-    with pytest.raises(ValueError, match="Could not identify exactly one responsibility in the reply:"):
+    with pytest.raises(
+        ValueError, match="Could not identify exactly one responsibility in the reply:"
+    ):
         base_dispatcher._identify_responsibility(llm_reply)
 
 
@@ -81,19 +84,20 @@ def test_identify_responsibility_invalid(base_dispatcher, llm_reply):
     [
         ("cooking carbonara", "marco polo"),
         ("watching netflix", "jane doe"),
-    ]
+    ],
 )
 def test_identify_person_valid(base_dispatcher, responsibility, expected_person):
     """Test _identify_person with valid responsibilities."""
     person = base_dispatcher._identify_person(responsibility)
     assert person == expected_person
 
+
 @pytest.mark.parametrize(
     "responsibility",
     [
         ("nonexistent responsibility"),
         ("another fake responsibility"),
-    ]
+    ],
 )
 def test_identify_person_invalid(base_dispatcher, responsibility):
     """Test _identify_person with invalid responsibilities."""
@@ -110,4 +114,3 @@ def test_all_responsibilities():
         }
     )
     assert dispatcher.all_responsibilities == ["doing the dishes", "saying hi", "waving goodbye"]
-
