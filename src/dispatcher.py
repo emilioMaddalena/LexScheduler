@@ -70,7 +70,7 @@ class Dispatcher:
                 f"Could not identify exactly one responsibility in the reply: {llm_reply}"
             )
         return found_responsibilities[0]
-    
+
     def _identify_person(self, responsibility: str) -> str:
         """Find which one person from the roster has the responsibility."""
         person = next((p for p, r in self.roster.items() if responsibility in r), None)
