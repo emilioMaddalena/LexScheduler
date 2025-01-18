@@ -99,12 +99,6 @@ class Dispatcher:
     def _register_person(self, name: str, responsibilities: list[str]):
         self.roster[name] = responsibilities
 
-    def _check_llm_settigns(self, llm_settings: dict):
-        """Check if all LLM settings are present."""
-        accepted_keys = ["llm_model", "temp", "seed"]
-        if not (set(llm_settings.keys()) == set(accepted_keys)):
-            raise KeyError(f"llm_settings does not contain the keys needed: {accepted_keys}")
-
     @property
     def num_of_people(self) -> int:
         """Return the number of people in the roster."""
