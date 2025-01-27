@@ -60,28 +60,26 @@ class Llm:
 
     def chat(self, input_text: str) -> str:
         """Chat with the LLM with no context."""
-        messages = [
+        message = [
             {
                 "role": "user",
                 "content": input_text,
             }
         ]
-        message = self._prepend_system_message(messages)
+        if self.system_message:
+            message = Llm._prepend_system_message(self.system_message, message)
         response = ollama.chat(model=self.model_name, messages=message)
         if response.message.content:
             return response.message.content
         else:
             return DEFAULT_ANSWER
 
-    def _prepend_system_message(self, message):
+    @staticmethod
+    def _prepend_system_message(system_message, message):
         """Prepend a system message to the existing message if needed."""
-        # Nothing to prepend
-        if not self.system_message:
-            return message
-        # Smth to prepend
         formatted_system_message = {
             "role": "system",
-            "content": self.system_message,
+            "content": system_message,
         }
         return [formatted_system_message, *message]
 
@@ -105,7 +103,8 @@ class Llm:
                 "content": input_text,
             }
         ]
-        message = self._prepend_system_message(message)
+        if self.system_message:
+            message = Llm._prepend_system_message(self.system_message, message)
         url = f"http://{OLLAMA_ADDRESS}:{OLLAMA_PORT}/api/chat"
         payload = {
             "model": self.model_name,
@@ -130,7 +129,7 @@ class Llm:
                                  one from the user, then the assistant, then user, etc.
             input_text (str): the new query to be answered by the model.
         """
-        self._validate_history(history)
+        Llm._validate_history(history)
 
         # apply a user/assistant and content pattern to the history
         formatted_history = []
@@ -139,20 +138,22 @@ class Llm:
             role = roles[i % 2]
             formatted_history.append({"role": role, "content": content})
         # compose final message and submit it to the server
-        final_message = formatted_history + [
+        message = formatted_history + [
             {
                 "role": "user",
                 "content": input_text,
             },
         ]
-        final_message = self._prepend_system_message(final_message)
-        response = ollama.chat(model=self.model_name, messages=final_message)
+        if self.system_message:
+            message = Llm._prepend_system_message(self.system_message, message)
+        response = ollama.chat(model=self.model_name, messages=message)
         if response.message.content:
             return response.message.content
         else:
             return DEFAULT_ANSWER
 
-    def _validate_history(self, history: list[str]):
+    @staticmethod
+    def _validate_history(history: list[str]):
         """Check if the history is valid.
 
         Args:
