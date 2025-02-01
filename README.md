@@ -1,8 +1,6 @@
 # LexScheduler
 
-![Lint Status](https://github.com/emilioMaddalena/LexScheduler/actions/workflows/run_linter.yml/badge.svg?branch=main)
-
-![Test Status](https://github.com/emilioMaddalena/LexScheduler/actions/workflows/run_tests.yml/badge.svg?branch=main)
+![Lint Status](https://github.com/emilioMaddalena/LexScheduler/actions/workflows/run_linter.yml/badge.svg?branch=main) ![Test Status](https://github.com/emilioMaddalena/LexScheduler/actions/workflows/run_tests.yml/badge.svg?branch=main)
 
 An LLM-powered tool to process legal orders and extract tasks, deadlines, and key actions from them.
 
