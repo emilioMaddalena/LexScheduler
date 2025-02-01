@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 import requests
 
@@ -5,8 +7,16 @@ from src.llm import Llm
 
 
 @pytest.fixture(scope="module")
-def llm_instance():  # noqa: D103
-    return Llm("llama2-uncensored:latest")
+def mock_llm_instance():  # noqa: D103
+    """Return an LLM instance with no underlying connection to the server."""
+
+    def mocked_init(self, model_name, system_message):
+        """Similar to Llm.__init__, but without the server connection."""
+        self.model_name = model_name
+        self.system_message = system_message
+
+    with patch("src.llm.Llm.__init__", new=mocked_init):
+        return Llm("dummy_name", system_message=None)
 
 
 def mock_get_success(_):
@@ -23,16 +33,16 @@ def mock_get_failure(_):
     raise requests.exceptions.ConnectionError
 
 
-def test_is_ollama_running_success(monkeypatch, llm_instance):
+def test_is_ollama_running_success(monkeypatch, mock_llm_instance):
     """Test if the OLLAMA server is running."""
     monkeypatch.setattr(requests, "get", mock_get_success)
-    assert llm_instance._is_ollama_running() is True
+    assert mock_llm_instance._is_ollama_running()
 
 
-def test_is_ollama_running_failure(monkeypatch, llm_instance):
+def test_is_ollama_running_failure(monkeypatch, mock_llm_instance):
     """Test if the OLLAMA server is not running."""
     monkeypatch.setattr(requests, "get", mock_get_failure)
-    assert llm_instance._is_ollama_running() is False
+    assert not mock_llm_instance._is_ollama_running()
 
 
 def test_validate_history_valid():
@@ -75,16 +85,3 @@ def test_prepend_system_message(system_message):
     assert isinstance(output_message, list) and all(isinstance(msg, dict) for msg in output_message)
     # Make sure the first dict contains an actual system message
     assert output_message[0]["role"] == "system" and output_message[0]["content"] == system_message
-
-
-# def test_keep_alive(interface):  # noqa: D103
-#     result = interface.keep_alive()
-#     assert result is not None
-
-# def test_append_context(interface):  # noqa: D10
-#     interface.append_context("Test context")
-#     assert "Test context" in interface.context
-
-# def test_submit_query(interface):  # noqa: D103
-#     response = interface.submit_query("Hello")
-#     assert isinstance(response, str)
